@@ -1,450 +1,413 @@
-{\rtf1\ansi\ansicpg949\cocoartf2867
-\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
-{\colortbl;\red255\green255\blue255;}
-{\*\expandedcolortbl;;}
-\paperw11900\paperh16840\margl1440\margr1440\vieww11520\viewh8400\viewkind0
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>재고 관리 QR 시스템</title>
 
-\f0\fs24 \cf0 <!DOCTYPE html>\
-<html lang="ko">\
-<head>\
-  <meta charset="UTF-8" />\
-  <title>\uc0\u51116 \u44256  \u44288 \u47532  QR \u49884 \u49828 \u53596 </title>\
-\
-  <!-- QR \uc0\u53076 \u46300  \u49373 \u49457  \u46972 \u51060 \u48652 \u47084 \u47532  (qrcodejs) -->\
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>\
-\
-  <!-- \uc0\u52852 \u47700 \u46972 \u47196  QR \u53076 \u46300  \u49828 \u52884  \u46972 \u51060 \u48652 \u47084 \u47532  (html5-qrcode) -->\
-  <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>\
-\
-  <style>\
-    body \{\
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;\
-      margin: 0;\
-      padding: 0;\
-      background: #f5f5f5;\
-    \}\
-    header \{\
-      background: #1f2933;\
-      color: white;\
-      padding: 16px;\
-      text-align: center;\
-      font-size: 20px;\
-      font-weight: bold;\
-    \}\
-    .container \{\
-      max-width: 900px;\
-      margin: 24px auto;\
-      background: white;\
-      padding: 20px;\
-      border-radius: 12px;\
-      box-shadow: 0 4px 10px rgba(0,0,0,0.06);\
-    \}\
-    .tab-buttons \{\
-      display: flex;\
-      gap: 8px;\
-      margin-bottom: 16px;\
-    \}\
-    .tab-buttons button \{\
-      flex: 1;\
-      padding: 10px;\
-      border-radius: 8px;\
-      border: 1px solid #d0d7de;\
-      background: #f3f4f6;\
-      cursor: pointer;\
-      font-size: 14px;\
-    \}\
-    .tab-buttons button.active \{\
-      background: #2563eb;\
-      color: white;\
-      border-color: #2563eb;\
-      font-weight: 600;\
-    \}\
-    .page \{\
-      display: none;\
-    \}\
-    .page.active \{\
-      display: block;\
-    \}\
-    .form-row \{\
-      display: flex;\
-      gap: 12px;\
-      margin-bottom: 10px;\
-    \}\
-    .form-row label \{\
-      width: 100px;\
-      font-size: 14px;\
-      padding-top: 6px;\
-    \}\
-    .form-row input, .form-row textarea \{\
-      flex: 1;\
-      padding: 8px;\
-      border-radius: 6px;\
-      border: 1px solid #d0d7de;\
-      font-size: 14px;\
-    \}\
-    .form-row textarea \{\
-      resize: vertical;\
-      min-height: 60px;\
-    \}\
-    .btn-primary \{\
-      background: #2563eb;\
-      color: white;\
-      border: none;\
-      border-radius: 8px;\
-      padding: 10px 16px;\
-      cursor: pointer;\
-      font-size: 14px;\
-    \}\
-    .btn-secondary \{\
-      background: #e5e7eb;\
-      color: #111827;\
-      border: none;\
-      border-radius: 8px;\
-      padding: 8px 12px;\
-      cursor: pointer;\
-      font-size: 13px;\
-      margin-left: 8px;\
-    \}\
-    .section-title \{\
-      font-size: 18px;\
-      font-weight: 600;\
-      margin-bottom: 12px;\
-    \}\
-    #qrcode \{\
-      margin-top: 16px;\
-      padding: 12px;\
-      border: 1px dashed #d1d5db;\
-      display: inline-block;\
-      border-radius: 8px;\
-      background: #f9fafb;\
-    \}\
-    .info-box \{\
-      margin-top: 16px;\
-      padding: 12px;\
-      border-radius: 8px;\
-      background: #eff6ff;\
-      font-size: 13px;\
-      color: #1d4ed8;\
-    \}\
-    #reader \{\
-      width: 100%;\
-      max-width: 400px;\
-      margin-top: 12px;\
-    \}\
-    .material-detail \{\
-      margin-top: 16px;\
-      padding: 12px;\
-      border-radius: 8px;\
-      background: #f9fafb;\
-      border: 1px solid #e5e7eb;\
-      font-size: 14px;\
-    \}\
-    .material-detail p \{\
-      margin: 4px 0;\
-    \}\
-    .badge-id \{\
-      display: inline-block;\
-      margin-top: 8px;\
-      padding: 4px 8px;\
-      border-radius: 999px;\
-      background: #e5e7eb;\
-      font-size: 12px;\
-      color: #374151;\
-    \}\
-    .danger \{\
-      color: #b91c1c;\
-      font-weight: 600;\
-    \}\
-  </style>\
-</head>\
-<body>\
-  <header>\uc0\u50937  \u51116 \u44256  \u44288 \u47532  \u49884 \u49828 \u53596  (QR \u53076 \u46300 )</header>\
-\
-  <div class="container">\
-    <!-- \uc0\u53485  \u48260 \u53948 : 1) \u49888 \u44508  \u46321 \u47197 /QR \u49373 \u49457   2) QR \u49828 \u52884 /\u51312 \u54924  -->\
-    <div class="tab-buttons">\
-      <button id="tab-create" class="active" onclick="showPage('create')">1. \uc0\u49888 \u44508  \u51088 \u51116  \u46321 \u47197  & QR \u49373 \u49457 </button>\
-      <button id="tab-view" onclick="showPage('view')">2. QR \uc0\u49828 \u52884  & \u51088 \u51116  \u51312 \u54924 </button>\
-    </div>\
-\
-    <!-- 1. \uc0\u49888 \u44508  \u51088 \u51116  \u46321 \u47197  / QR \u49373 \u49457  \u54168 \u51060 \u51648  -->\
-    <div id="page-create" class="page active">\
-      <div class="section-title">\uc0\u49888 \u44508  \u51088 \u51116  \u46321 \u47197 </div>\
-\
-      <div class="form-row">\
-        <label>\uc0\u51088 \u51116 \u47749 </label>\
-        <input id="mat-name" placeholder="\uc0\u50696 : SUS \u48380 \u53944 " />\
-      </div>\
-\
-      <div class="form-row">\
-        <label>\uc0\u51088 \u51116 \u44508 \u44201 </label>\
-        <input id="mat-spec" placeholder="\uc0\u50696 : M10 x 40" />\
-      </div>\
-\
-      <div class="form-row">\
-        <label>\uc0\u48708 \u44256 </label>\
-        <textarea id="mat-note" placeholder="\uc0\u50696 : \u46300 \u47100  \u44148 \u51312 \u44592  \u46972 \u51064  \u50696 \u48708 \u54408 "></textarea>\
-      </div>\
-\
-      <div class="form-row">\
-        <label>\uc0\u44552 \u50529 </label>\
-        <input id="mat-price" type="number" placeholder="\uc0\u50696 : 1200 (\u49707 \u51088 \u47564 )" />\
-      </div>\
-\
-      <div class="form-row">\
-        <label>\uc0\u54788 \u51116 \u49688 \u47049 </label>\
-        <input id="mat-qty" type="number" placeholder="\uc0\u50696 : 50" />\
-      </div>\
-\
-      <button class="btn-primary" onclick="handleCreateMaterial()">QR \uc0\u53076 \u46300  \u49373 \u49457 \u54616 \u44592 </button>\
-\
-      <div id="create-result" class="info-box" style="display:none;"></div>\
-\
-      <div id="qrcode" style="display:none;"></div>\
-    </div>\
-\
-    <!-- 2. QR \uc0\u49828 \u52884  / \u51088 \u51116  \u51312 \u54924  \u54168 \u51060 \u51648  -->\
-    <div id="page-view" class="page">\
-      <div class="section-title">QR \uc0\u53076 \u46300  \u49828 \u52884 \u51004 \u47196  \u51088 \u51116  \u51312 \u54924 </div>\
-\
-      <p style="font-size:13px; color:#4b5563; margin-bottom:4px;">\
-        <strong>\uc0\u49324 \u50857  \u48169 \u48277 :</strong> \u50500 \u47000  \'93\u52852 \u47700 \u46972 \u47196  \u49828 \u52884  \u49884 \u51089 \'94 \u48260 \u53948 \u51012  \u45580 \u47084 \u49436  QR\u51012  \u48708 \u52628 \u47732  \u46121 \u45768 \u45796 .\
-      </p>\
-      <button class="btn-primary" onclick="startScan()">\uc0\u52852 \u47700 \u46972 \u47196  \u49828 \u52884  \u49884 \u51089 </button>\
-      <button class="btn-secondary" onclick="stopScan()">\uc0\u49828 \u52884  \u51221 \u51648 </button>\
-\
-      <div id="reader"></div>\
-\
-      <div id="scan-message" class="info-box" style="display:none;"></div>\
-\
-      <div id="material-detail" class="material-detail" style="display:none;"></div>\
-    </div>\
-  </div>\
-\
-  <script>\
-    // ---------------------------\
-    // \uc0\u53485 (\u54168 \u51060 \u51648 ) \u51204 \u54872 \
-    // ---------------------------\
-    function showPage(page) \{\
-      const createPage = document.getElementById('page-create');\
-      const viewPage = document.getElementById('page-view');\
-      const tabCreate = document.getElementById('tab-create');\
-      const tabView = document.getElementById('tab-view');\
-\
-      if (page === 'create') \{\
-        createPage.classList.add('active');\
-        viewPage.classList.remove('active');\
-        tabCreate.classList.add('active');\
-        tabView.classList.remove('active');\
-      \} else \{\
-        viewPage.classList.add('active');\
-        createPage.classList.remove('active');\
-        tabView.classList.add('active');\
-        tabCreate.classList.remove('active');\
-      \}\
-    \}\
-\
-    // ---------------------------\
-    // \uc0\u44036 \u45800 \u54620  \u44256 \u50976  ID \u49373 \u49457  \u54632 \u49688 \
-    // ---------------------------\
-    function generateMaterialId() \{\
-      const now = Date.now().toString(36);\
-      const rand = Math.random().toString(36).substring(2, 7).toUpperCase();\
-      return 'MAT-' + now + '-' + rand; // \uc0\u50696 : MAT-lm2xk9-Y7F3C\
-    \}\
-\
-    // ---------------------------\
-    // LocalStorage\uc0\u50640  \u51088 \u51116  \u51200 \u51109  / \u51312 \u54924 \
-    // ---------------------------\
-    function loadAllMaterials() \{\
-      const raw = localStorage.getItem('materials');\
-      if (!raw) return \{\};\
-      try \{\
-        return JSON.parse(raw);\
-      \} catch (e) \{\
-        console.error('JSON parse error', e);\
-        return \{\};\
-      \}\
-    \}\
-\
-    function saveAllMaterials(obj) \{\
-      localStorage.setItem('materials', JSON.stringify(obj));\
-    \}\
-\
-    function saveMaterial(id, data) \{\
-      const all = loadAllMaterials();\
-      all[id] = data;\
-      saveAllMaterials(all);\
-    \}\
-\
-    function findMaterial(id) \{\
-      const all = loadAllMaterials();\
-      return all[id];\
-    \}\
-\
-    // ---------------------------\
-    // 1. \uc0\u49888 \u44508  \u51088 \u51116  \u46321 \u47197  + QR \u49373 \u49457 \
-    // ---------------------------\
-    let qrcodeInstance = null;\
-\
-    function handleCreateMaterial() \{\
-      const name = document.getElementById('mat-name').value.trim();\
-      const spec = document.getElementById('mat-spec').value.trim();\
-      const note = document.getElementById('mat-note').value.trim();\
-      const price = document.getElementById('mat-price').value.trim();\
-      const qty = document.getElementById('mat-qty').value.trim();\
-\
-      if (!name) \{\
-        alert('\uc0\u51088 \u51116 \u47749 \u51008  \u54596 \u49688 \u51077 \u45768 \u45796 .');\
-        return;\
-      \}\
-\
-      const id = generateMaterialId();\
-\
-      const material = \{\
-        id,\
-        name,\
-        spec,\
-        note,\
-        price: price ? Number(price) : 0,\
-        qty: qty ? Number(qty) : 0,\
-        createdAt: new Date().toISOString()\
-      \};\
-\
-      // LocalStorage\uc0\u50640  \u51200 \u51109 \
-      saveMaterial(id, material);\
-\
-      // QR \uc0\u53076 \u46300  \u50689 \u50669  \u52488 \u44592 \u54868 \
-      const qrContainer = document.getElementById('qrcode');\
-      qrContainer.innerHTML = '';\
-\
-      // QR \uc0\u53076 \u46300  \u53581 \u49828 \u53944 : \u50668 \u44592 \u49436 \u45716  \u45800 \u49692 \u55176  "\u44256 \u50976  ID"\u47564  \u45347 \u50632 \u51020 \
-      // (\uc0\u45208 \u51473 \u50640  \u49436 \u48260 \u47484  \u50416 \u47732  URL \u54805 \u53468 \u47196  \u48148 \u44992  \u49688  \u51080 \u51020 )\
-      qrcodeInstance = new QRCode(qrContainer, \{\
-        text: id,\
-        width: 200,\
-        height: 200\
-      \});\
-\
-      qrContainer.style.display = 'inline-block';\
-\
-      const resultBox = document.getElementById('create-result');\
-      resultBox.style.display = 'block';\
-      resultBox.innerHTML = `\
-        <div><strong>\uc0\u51088 \u51116 \u44032  \u51200 \u51109 \u46104 \u50632 \u49845 \u45768 \u45796 .</strong></div>\
-        <div>\uc0\u51060  QR \u53076 \u46300 \u47484  \u51064 \u49604 \u54616 \u44144 \u45208  \u46972 \u48296 \u50640  \u48537 \u50668 \u49436  \u49324 \u50857 \u54616 \u49464 \u50836 .</div>\
-        <div class="badge-id">ID: $\{id\}</div>\
-      `;\
-\
-      // \uc0\u51077 \u47141 \u44050  \u52488 \u44592 \u54868  (\u50896 \u54616 \u47732  \u45224 \u44200 \u46188 \u46020  \u46120 )\
-      document.getElementById('mat-name').value = '';\
-      document.getElementById('mat-spec').value = '';\
-      document.getElementById('mat-note').value = '';\
-      document.getElementById('mat-price').value = '';\
-      document.getElementById('mat-qty').value = '';\
-    \}\
-\
-    // ---------------------------\
-    // 2. QR \uc0\u49828 \u52884  + \u51088 \u51116  \u51312 \u54924 \
-    // ---------------------------\
-    let html5QrCode = null;\
-    let isScanning = false;\
-\
-    async function startScan() \{\
-      const msg = document.getElementById('scan-message');\
-      msg.style.display = 'block';\
-      msg.innerHTML = '\uc0\u52852 \u47700 \u46972  \u44428 \u54620  \u54728 \u50857  \u54980 , QR \u53076 \u46300 \u47484  \u52852 \u47700 \u46972  \u51473 \u50521 \u50640  \u47582 \u52656 \u51452 \u49464 \u50836 .';\
-\
-      // \uc0\u51060 \u48120  \u49828 \u52884  \u51473 \u51060 \u47732  \u45796 \u49884  \u49884 \u51089 \u54616 \u51648  \u50506 \u51020 \
-      if (isScanning) return;\
-\
-      const readerElementId = "reader";\
-\
-      if (!html5QrCode) \{\
-        html5QrCode = new Html5Qrcode(readerElementId);\
-      \}\
-\
-      const config = \{\
-        fps: 10, // \uc0\u52488 \u45817  \u49828 \u52884  \u54943 \u49688 \
-        qrbox: \{ width: 250, height: 250 \} // \uc0\u49828 \u52884  \u48149 \u49828  \u53356 \u44592 \
-      \};\
-\
-      const onScanSuccess = (decodedText, decodedResult) => \{\
-        console.log('\uc0\u49828 \u52884  \u49457 \u44277 :', decodedText, decodedResult);\
-        msg.innerHTML = 'QR \uc0\u53076 \u46300  \u51064 \u49885  \u50756 \u47308 ! \u51088 \u51116  \u51221 \u48372 \u47484  \u48520 \u47084 \u50741 \u45768 \u45796 .';\
-\
-        // \uc0\u49828 \u52884  \u51473 \u51648  (\u54620  \u48264  \u51069 \u44256  \u47688 \u52628 \u44256  \u49910 \u51004 \u47732 )\
-        stopScan();\
-\
-        // decodedText \uc0\u50640 \u45716  \u50864 \u47532 \u44032  QR \u49373 \u49457 \u54624  \u46412  \u45347 \u51008  "ID"\u44032  \u46308 \u50612  \u51080 \u51020 \
-        showMaterialFromId(decodedText);\
-      \};\
-\
-      const onScanFailure = (errorMessage) => \{\
-        // \uc0\u44228 \u49549  \u49828 \u52884  \u51473 \u51068  \u46412  \u48156 \u49373 \u54616 \u45716  \u50640 \u47084 \u45716  \u47924 \u49884 \u54644 \u46020  \u46120 \
-        // console.warn('\uc0\u49828 \u52884  \u50640 \u47084 :', errorMessage);\
-      \};\
-\
-      try \{\
-        isScanning = true;\
-        await html5QrCode.start(\
-          \{ facingMode: "environment" \}, // \uc0\u49828 \u47560 \u53944 \u54256  \u46263 \u47732  \u52852 \u47700 \u46972  \u50864 \u49440 \
-          config,\
-          onScanSuccess,\
-          onScanFailure\
-        );\
-      \} catch (err) \{\
-        console.error(err);\
-        msg.innerHTML = '<span class="danger">\uc0\u52852 \u47700 \u46972 \u47484  \u49884 \u51089 \u54624  \u49688  \u50630 \u49845 \u45768 \u45796 . (HTTPS \u54872 \u44221  \u46608 \u45716  \u44428 \u54620  \u49444 \u51221 \u51012  \u54869 \u51064 \u54616 \u49464 \u50836 )</span>';\
-        isScanning = false;\
-      \}\
-    \}\
-\
-    async function stopScan() \{\
-      if (html5QrCode && isScanning) \{\
-        try \{\
-          await html5QrCode.stop();\
-        \} catch (err) \{\
-          console.error('stop error', err);\
-        \}\
-      \}\
-      isScanning = false;\
-    \}\
-\
-    function showMaterialFromId(id) \{\
-      const detailBox = document.getElementById('material-detail');\
-      const msg = document.getElementById('scan-message');\
-\
-      const material = findMaterial(id);\
-\
-      if (!material) \{\
-        detailBox.style.display = 'block';\
-        detailBox.innerHTML = `\
-          <p class="danger">\uc0\u54644 \u45817  ID\u51032  \u51088 \u51116  \u51221 \u48372 \u47484  \u52286 \u51012  \u49688  \u50630 \u49845 \u45768 \u45796 .</p>\
-          <p style="font-size:13px; color:#6b7280;">\uc0\u44057 \u51008  \u48652 \u46972 \u50864 \u51200 \u50640 \u49436  \u51088 \u51116 \u47484  \u46321 \u47197 \u54664 \u45716 \u51648  \u54869 \u51064 \u54616 \u49464 \u50836 .</p>\
-          <p class="badge-id">ID: $\{id\}</p>\
-        `;\
-        return;\
-      \}\
-\
-      detailBox.style.display = 'block';\
-      detailBox.innerHTML = `\
-        <p><strong>\uc0\u51088 \u51116 \u47749 :</strong> $\{material.name\}</p>\
-        <p><strong>\uc0\u51088 \u51116 \u44508 \u44201 :</strong> $\{material.spec || '-'\}</p>\
-        <p><strong>\uc0\u48708 \u44256 :</strong> $\{material.note || '-'\}</p>\
-        <p><strong>\uc0\u44552 \u50529 :</strong> $\{material.price.toLocaleString()\} \u50896 </p>\
-        <p><strong>\uc0\u54788 \u51116 \u49688 \u47049 :</strong> $\{material.qty\}</p>\
-        <p class="badge-id">ID: $\{material.id\}</p>\
-      `;\
-\
-      msg.innerHTML = '\uc0\u51088 \u51116  \u51221 \u48372 \u47484  \u48520 \u47084 \u50772 \u49845 \u45768 \u45796 .';\
-    \}\
-\
-    // \uc0\u54168 \u51060 \u51648 \u47484  \u46496 \u45216  \u46412  \u49828 \u52884  \u51473 \u51648 (\u50504 \u51204 )\
-    window.addEventListener('beforeunload', () => \{\
-      stopScan();\
-    \});\
-  </script>\
-</body>\
-</html>}
+  <!-- QR 코드 생성 라이브러리 (qrcodejs) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+  <!-- 카메라로 QR 코드 스캔 라이브러리 (html5-qrcode) -->
+  <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f5f5f5;
+    }
+    header {
+      background: #1f2933;
+      color: white;
+      padding: 16px;
+      text-align: center;
+      font-size: 20px;
+      font-weight: bold;
+    }
+    .container {
+      max-width: 900px;
+      margin: 24px auto;
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+    }
+    .tab-buttons {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    .tab-buttons button {
+      flex: 1;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #d0d7de;
+      background: #f3f4f6;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .tab-buttons button.active {
+      background: #2563eb;
+      color: white;
+      border-color: #2563eb;
+      font-weight: 600;
+    }
+    .page {
+      display: none;
+    }
+    .page.active {
+      display: block;
+    }
+    .form-row {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+    .form-row label {
+      width: 100px;
+      font-size: 14px;
+      padding-top: 6px;
+    }
+    .form-row input, .form-row textarea {
+      flex: 1;
+      padding: 8px;
+      border-radius: 6px;
+      border: 1px solid #d0d7de;
+      font-size: 14px;
+    }
+    .form-row textarea {
+      resize: vertical;
+      min-height: 60px;
+    }
+    .btn-primary {
+      background: #2563eb;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 16px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .btn-secondary {
+      background: #e5e7eb;
+      color: #111827;
+      border: none;
+      border-radius: 8px;
+      padding: 8px 12px;
+      cursor: pointer;
+      font-size: 13px;
+      margin-left: 8px;
+    }
+    .section-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+    #qrcode {
+      margin-top: 16px;
+      padding: 12px;
+      border: 1px dashed #d1d5db;
+      display: inline-block;
+      border-radius: 8px;
+      background: #f9fafb;
+    }
+    .info-box {
+      margin-top: 16px;
+      padding: 12px;
+      border-radius: 8px;
+      background: #eff6ff;
+      font-size: 13px;
+      color: #1d4ed8;
+    }
+    #reader {
+      width: 100%;
+      max-width: 400px;
+      margin-top: 12px;
+    }
+    .material-detail {
+      margin-top: 16px;
+      padding: 12px;
+      border-radius: 8px;
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      font-size: 14px;
+    }
+    .material-detail p {
+      margin: 4px 0;
+    }
+    .badge-id {
+      display: inline-block;
+      margin-top: 8px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: #e5e7eb;
+      font-size: 12px;
+      color: #374151;
+    }
+    .danger {
+      color: #b91c1c;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <header>웹 재고 관리 시스템 (QR 코드)</header>
+
+  <div class="container">
+    <div class="tab-buttons">
+      <button id="tab-create" class="active" onclick="showPage('create')">1. 신규 자재 등록 & QR 생성</button>
+      <button id="tab-view" onclick="showPage('view')">2. QR 스캔 & 자재 조회</button>
+    </div>
+
+    <div id="page-create" class="page active">
+      <div class="section-title">신규 자재 등록</div>
+
+      <div class="form-row">
+        <label>자재명</label>
+        <input id="mat-name" placeholder="예: SUS 볼트" />
+      </div>
+
+      <div class="form-row">
+        <label>자재규격</label>
+        <input id="mat-spec" placeholder="예: M10 x 40" />
+      </div>
+
+      <div class="form-row">
+        <label>비고</label>
+        <textarea id="mat-note" placeholder="예: 드럼 건조기 라인 예비품"></textarea>
+      </div>
+
+      <div class="form-row">
+        <label>금액</label>
+        <input id="mat-price" type="number" placeholder="예: 1200 (숫자만)" />
+      </div>
+
+      <div class="form-row">
+        <label>현재수량</label>
+        <input id="mat-qty" type="number" placeholder="예: 50" />
+      </div>
+
+      <button class="btn-primary" onclick="handleCreateMaterial()">QR 코드 생성하기</button>
+
+      <div id="create-result" class="info-box" style="display:none;"></div>
+
+      <div id="qrcode" style="display:none;"></div>
+    </div>
+
+    <div id="page-view" class="page">
+      <div class="section-title">QR 코드 스캔으로 자재 조회</div>
+
+      <p style="font-size:13px; color:#4b5563; margin-bottom:4px;">
+        <strong>사용 방법:</strong> 아래 “카메라로 스캔 시작” 버튼을 눌러서 QR을 비추면 됩니다.
+      </p>
+      <button class="btn-primary" onclick="startScan()">카메라로 스캔 시작</button>
+      <button class="btn-secondary" onclick="stopScan()">스캔 정지</button>
+
+      <div id="reader"></div>
+
+      <div id="scan-message" class="info-box" style="display:none;"></div>
+
+      <div id="material-detail" class="material-detail" style="display:none;"></div>
+    </div>
+  </div>
+
+  <script>
+    function showPage(page) {
+      const createPage = document.getElementById('page-create');
+      const viewPage = document.getElementById('page-view');
+      const tabCreate = document.getElementById('tab-create');
+      const tabView = document.getElementById('tab-view');
+
+      if (page === 'create') {
+        createPage.classList.add('active');
+        viewPage.classList.remove('active');
+        tabCreate.classList.add('active');
+        tabView.classList.remove('active');
+      } else {
+        viewPage.classList.add('active');
+        createPage.classList.remove('active');
+        tabView.classList.add('active');
+        tabCreate.classList.remove('active');
+      }
+    }
+
+    function generateMaterialId() {
+      const now = Date.now().toString(36);
+      const rand = Math.random().toString(36).substring(2, 7).toUpperCase();
+      return 'MAT-' + now + '-' + rand;
+    }
+
+    function loadAllMaterials() {
+      const raw = localStorage.getItem('materials');
+      if (!raw) return {};
+      try {
+        return JSON.parse(raw);
+      } catch (e) {
+        console.error('JSON parse error', e);
+        return {};
+      }
+    }
+
+    function saveAllMaterials(obj) {
+      localStorage.setItem('materials', JSON.stringify(obj));
+    }
+
+    function saveMaterial(id, data) {
+      const all = loadAllMaterials();
+      all[id] = data;
+      saveAllMaterials(all);
+    }
+
+    function findMaterial(id) {
+      const all = loadAllMaterials();
+      return all[id];
+    }
+
+    let qrcodeInstance = null;
+
+    function handleCreateMaterial() {
+      const name = document.getElementById('mat-name').value.trim();
+      const spec = document.getElementById('mat-spec').value.trim();
+      const note = document.getElementById('mat-note').value.trim();
+      const price = document.getElementById('mat-price').value.trim();
+      const qty = document.getElementById('mat-qty').value.trim();
+
+      if (!name) {
+        alert('자재명은 필수입니다.');
+        return;
+      }
+
+      const id = generateMaterialId();
+
+      const material = {
+        id,
+        name,
+        spec,
+        note,
+        price: price ? Number(price) : 0,
+        qty: qty ? Number(qty) : 0,
+        createdAt: new Date().toISOString()
+      };
+
+      saveMaterial(id, material);
+
+      const qrContainer = document.getElementById('qrcode');
+      qrContainer.innerHTML = '';
+
+      qrcodeInstance = new QRCode(qrContainer, {
+        text: id,
+        width: 200,
+        height: 200
+      });
+
+      qrContainer.style.display = 'inline-block';
+
+      const resultBox = document.getElementById('create-result');
+      resultBox.style.display = 'block';
+      resultBox.innerHTML = `
+        <div><strong>자재가 저장되었습니다.</strong></div>
+        <div>이 QR 코드를 인쇄하거나 라벨에 붙여서 사용하세요.</div>
+        <div class="badge-id">ID: ${id}</div>
+      `;
+
+      document.getElementById('mat-name').value = '';
+      document.getElementById('mat-spec').value = '';
+      document.getElementById('mat-note').value = '';
+      document.getElementById('mat-price').value = '';
+      document.getElementById('mat-qty').value = '';
+    }
+
+    let html5QrCode = null;
+    let isScanning = false;
+
+    async function startScan() {
+      const msg = document.getElementById('scan-message');
+      msg.style.display = 'block';
+      msg.innerHTML = '카메라 권한 허용 후, QR 코드를 카메라 중앙에 맞춰주세요.';
+
+      if (isScanning) return;
+
+      const readerElementId = "reader";
+
+      if (!html5QrCode) {
+        html5QrCode = new Html5Qrcode(readerElementId);
+      }
+
+      const config = {
+        fps: 10,
+        qrbox: { width: 250, height: 250 }
+      };
+
+      const onScanSuccess = (decodedText, decodedResult) => {
+        console.log('스캔 성공:', decodedText, decodedResult);
+        msg.innerHTML = 'QR 코드 인식 완료! 자재 정보를 불러옵니다.';
+
+        stopScan();
+        showMaterialFromId(decodedText);
+      };
+
+      const onScanFailure = (errorMessage) => {
+      };
+
+      try {
+        isScanning = true;
+        await html5QrCode.start(
+          { facingMode: "environment" },
+          config,
+          onScanSuccess,
+          onScanFailure
+        );
+      } catch (err) {
+        console.error(err);
+        msg.innerHTML = '<span class="danger">카메라를 시작할 수 없습니다. (HTTPS 환경 또는 권한 설정을 확인하세요)</span>';
+        isScanning = false;
+      }
+    }
+
+    async function stopScan() {
+      if (html5QrCode && isScanning) {
+        try {
+          await html5QrCode.stop();
+        } catch (err) {
+          console.error('stop error', err);
+        }
+      }
+      isScanning = false;
+    }
+
+    function showMaterialFromId(id) {
+      const detailBox = document.getElementById('material-detail');
+      const msg = document.getElementById('scan-message');
+
+      const material = findMaterial(id);
+
+      if (!material) {
+        detailBox.style.display = 'block';
+        detailBox.innerHTML = `
+          <p class="danger">해당 ID의 자재 정보를 찾을 수 없습니다.</p>
+          <p style="font-size:13px; color:#6b7280;">같은 브라우저에서 자재를 등록했는지 확인하세요.</p>
+          <p class="badge-id">ID: ${id}</p>
+        `;
+        return;
+      }
+
+      detailBox.style.display = 'block';
+      detailBox.innerHTML = `
+        <p><strong>자재명:</strong> ${material.name}</p>
+        <p><strong>자재규격:</strong> ${material.spec || '-'}</p>
+        <p><strong>비고:</strong> ${material.note || '-'}</p>
+        <p><strong>금액:</strong> ${material.price.toLocaleString()} 원</p>
+        <p><strong>현재수량:</strong> ${material.qty}</p>
+        <p class="badge-id">ID: ${material.id}</p>
+      `;
+
+      msg.innerHTML = '자재 정보를 불러왔습니다.';
+    }
+
+    window.addEventListener('beforeunload', () => {
+      stopScan();
+    });
+  </script>
+</body>
+</html>
