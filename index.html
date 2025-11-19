@@ -2,14 +2,7 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <title>재고 관리 QR 시스템</title>
-
-  <!-- QR 코드 생성 라이브러리 (qrcodejs) -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-
-  <!-- 카메라로 QR 코드 스캔 라이브러리 (html5-qrcode) -->
-  <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
-
+  <title>재고 리스트</title>
   <style>
     body {
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -18,46 +11,24 @@
       background: #f5f5f5;
     }
     header {
-      background: #1f2933;
+      background: #111827;
       color: white;
-      padding: 16px;
-      text-align: center;
+      padding: 16px 20px;
       font-size: 20px;
-      font-weight: bold;
+      font-weight: 600;
     }
     .container {
-      max-width: 900px;
+      max-width: 1000px;
       margin: 24px auto;
       background: white;
       padding: 20px;
       border-radius: 12px;
       box-shadow: 0 4px 10px rgba(0,0,0,0.06);
     }
-    .tab-buttons {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 16px;
-    }
-    .tab-buttons button {
-      flex: 1;
-      padding: 10px;
-      border-radius: 8px;
-      border: 1px solid #d0d7de;
-      background: #f3f4f6;
-      cursor: pointer;
-      font-size: 14px;
-    }
-    .tab-buttons button.active {
-      background: #2563eb;
-      color: white;
-      border-color: #2563eb;
+    .section-title {
+      font-size: 18px;
       font-weight: 600;
-    }
-    .page {
-      display: none;
-    }
-    .page.active {
-      display: block;
+      margin-bottom: 12px;
     }
     .form-row {
       display: flex;
@@ -65,349 +36,324 @@
       margin-bottom: 10px;
     }
     .form-row label {
-      width: 100px;
+      width: 110px;
       font-size: 14px;
       padding-top: 6px;
     }
-    .form-row input, .form-row textarea {
+    .form-row input,
+    .form-row textarea {
       flex: 1;
       padding: 8px;
       border-radius: 6px;
-      border: 1px solid #d0d7de;
+      border: 1px solid #d1d5db;
       font-size: 14px;
     }
     .form-row textarea {
       resize: vertical;
       min-height: 60px;
     }
+    .hint {
+      font-size: 12px;
+      color: #6b7280;
+      margin-bottom: 8px;
+    }
     .btn-primary {
       background: #2563eb;
       color: white;
       border: none;
       border-radius: 8px;
-      padding: 10px 16px;
+      padding: 9px 16px;
       cursor: pointer;
       font-size: 14px;
+      margin-top: 4px;
     }
-    .btn-secondary {
-      background: #e5e7eb;
-      color: #111827;
+    .btn-primary:hover {
+      background: #1d4ed8;
+    }
+    .btn-danger {
+      background: #ef4444;
+      color: white;
       border: none;
-      border-radius: 8px;
-      padding: 8px 12px;
+      border-radius: 6px;
+      padding: 4px 8px;
+      font-size: 12px;
       cursor: pointer;
-      font-size: 13px;
-      margin-left: 8px;
     }
-    .section-title {
-      font-size: 18px;
-      font-weight: 600;
-      margin-bottom: 12px;
+    .btn-danger:hover {
+      background: #dc2626;
     }
-    #qrcode {
-      margin-top: 16px;
-      padding: 12px;
-      border: 1px dashed #d1d5db;
-      display: inline-block;
-      border-radius: 8px;
-      background: #f9fafb;
-    }
-    .info-box {
-      margin-top: 16px;
-      padding: 12px;
-      border-radius: 8px;
-      background: #eff6ff;
-      font-size: 13px;
-      color: #1d4ed8;
-    }
-    #reader {
+    table {
       width: 100%;
-      max-width: 400px;
-      margin-top: 12px;
-    }
-    .material-detail {
+      border-collapse: collapse;
       margin-top: 16px;
-      padding: 12px;
-      border-radius: 8px;
-      background: #f9fafb;
-      border: 1px solid #e5e7eb;
-      font-size: 14px;
+      font-size: 13px;
     }
-    .material-detail p {
-      margin: 4px 0;
+    thead {
+      background: #f3f4f6;
+    }
+    th, td {
+      border: 1px solid #e5e7eb;
+      padding: 8px;
+      text-align: center;
+    }
+    th {
+      font-weight: 600;
+    }
+    tbody tr:nth-child(even) {
+      background: #fcfcfc;
+    }
+    .empty-row {
+      text-align: center;
+      color: #9ca3af;
+      padding: 16px 0;
     }
     .badge-id {
       display: inline-block;
-      margin-top: 8px;
-      padding: 4px 8px;
+      padding: 2px 6px;
       border-radius: 999px;
       background: #e5e7eb;
-      font-size: 12px;
-      color: #374151;
-    }
-    .danger {
-      color: #b91c1c;
-      font-weight: 600;
+      font-size: 11px;
     }
   </style>
 </head>
 <body>
-  <header>웹 재고 관리 시스템 (QR 코드)</header>
+  <header>재고 리스트 관리</header>
 
   <div class="container">
-    <div class="tab-buttons">
-      <button id="tab-create" class="active" onclick="showPage('create')">1. 신규 자재 등록 & QR 생성</button>
-      <button id="tab-view" onclick="showPage('view')">2. QR 스캔 & 자재 조회</button>
-    </div>
-
-    <div id="page-create" class="page active">
-      <div class="section-title">신규 자재 등록</div>
+    <!-- 재고 등록 영역 -->
+    <div>
+      <div class="section-title">재고 추가</div>
+      <div class="hint">
+        자재번호는 <strong>네가 직접 8자리</strong>로 만들어서 입력하세요.
+        (예: <code>AB123456</code> / 숫자, 영문 아무 조합 가능)
+      </div>
 
       <div class="form-row">
-        <label>자재명</label>
+        <label for="mat-id">자재번호 (8자리)</label>
+        <input id="mat-id" maxlength="8" placeholder="예: AB123456" />
+      </div>
+
+      <div class="form-row">
+        <label for="mat-name">자재명</label>
         <input id="mat-name" placeholder="예: SUS 볼트" />
       </div>
 
       <div class="form-row">
-        <label>자재규격</label>
+        <label for="mat-spec">자재규격</label>
         <input id="mat-spec" placeholder="예: M10 x 40" />
       </div>
 
       <div class="form-row">
-        <label>비고</label>
-        <textarea id="mat-note" placeholder="예: 드럼 건조기 라인 예비품"></textarea>
-      </div>
-
-      <div class="form-row">
-        <label>금액</label>
+        <label for="mat-price">금액</label>
         <input id="mat-price" type="number" placeholder="예: 1200 (숫자만)" />
       </div>
 
       <div class="form-row">
-        <label>현재수량</label>
+        <label for="mat-qty">현재수량</label>
         <input id="mat-qty" type="number" placeholder="예: 50" />
       </div>
 
-      <button class="btn-primary" onclick="handleCreateMaterial()">QR 코드 생성하기</button>
+      <div class="form-row">
+        <label for="mat-note">비고</label>
+        <textarea id="mat-note" placeholder="예: 드럼 건조기 라인 예비품"></textarea>
+      </div>
 
-      <div id="create-result" class="info-box" style="display:none;"></div>
-
-      <div id="qrcode" style="display:none;"></div>
+      <button class="btn-primary" onclick="handleAdd()">재고 추가</button>
     </div>
 
-    <div id="page-view" class="page">
-      <div class="section-title">QR 코드 스캔으로 자재 조회</div>
-
-      <p style="font-size:13px; color:#4b5563; margin-bottom:4px;">
-        <strong>사용 방법:</strong> 아래 “카메라로 스캔 시작” 버튼을 눌러서 QR을 비추면 됩니다.
-      </p>
-      <button class="btn-primary" onclick="startScan()">카메라로 스캔 시작</button>
-      <button class="btn-secondary" onclick="stopScan()">스캔 정지</button>
-
-      <div id="reader"></div>
-
-      <div id="scan-message" class="info-box" style="display:none;"></div>
-
-      <div id="material-detail" class="material-detail" style="display:none;"></div>
+    <!-- 재고 리스트 영역 -->
+    <div style="margin-top: 28px;">
+      <div class="section-title">재고 리스트</div>
+      <table>
+        <thead>
+          <tr>
+            <th>No</th>
+            <th>자재번호</th>
+            <th>자재명</th>
+            <th>자재규격</th>
+            <th>금액</th>
+            <th>현재수량</th>
+            <th>비고</th>
+            <th>관리</th>
+          </tr>
+        </thead>
+        <tbody id="inventory-body">
+          <!-- JS에서 채움 -->
+        </tbody>
+      </table>
     </div>
   </div>
 
   <script>
-    function showPage(page) {
-      const createPage = document.getElementById('page-create');
-      const viewPage = document.getElementById('page-view');
-      const tabCreate = document.getElementById('tab-create');
-      const tabView = document.getElementById('tab-view');
+    // LocalStorage 키 이름
+    const STORAGE_KEY = "inventoryList";
 
-      if (page === 'create') {
-        createPage.classList.add('active');
-        viewPage.classList.remove('active');
-        tabCreate.classList.add('active');
-        tabView.classList.remove('active');
-      } else {
-        viewPage.classList.add('active');
-        createPage.classList.remove('active');
-        tabView.classList.add('active');
-        tabCreate.classList.remove('active');
-      }
-    }
+    // 페이지 로드 시 기존 데이터 불러오기
+    document.addEventListener("DOMContentLoaded", () => {
+      renderTable();
+    });
 
-    function generateMaterialId() {
-      const now = Date.now().toString(36);
-      const rand = Math.random().toString(36).substring(2, 7).toUpperCase();
-      return 'MAT-' + now + '-' + rand;
-    }
-
-    function loadAllMaterials() {
-      const raw = localStorage.getItem('materials');
-      if (!raw) return {};
+    // LocalStorage에서 목록 가져오기
+    function loadInventory() {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return [];
       try {
-        return JSON.parse(raw);
+        const arr = JSON.parse(raw);
+        if (Array.isArray(arr)) return arr;
+        return [];
       } catch (e) {
-        console.error('JSON parse error', e);
-        return {};
+        console.error("JSON parse error", e);
+        return [];
       }
     }
 
-    function saveAllMaterials(obj) {
-      localStorage.setItem('materials', JSON.stringify(obj));
+    // LocalStorage에 저장
+    function saveInventory(list) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
     }
 
-    function saveMaterial(id, data) {
-      const all = loadAllMaterials();
-      all[id] = data;
-      saveAllMaterials(all);
-    }
+    // 재고 추가 버튼 핸들러
+    function handleAdd() {
+      const idInput = document.getElementById("mat-id");
+      const nameInput = document.getElementById("mat-name");
+      const specInput = document.getElementById("mat-spec");
+      const priceInput = document.getElementById("mat-price");
+      const qtyInput = document.getElementById("mat-qty");
+      const noteInput = document.getElementById("mat-note");
 
-    function findMaterial(id) {
-      const all = loadAllMaterials();
-      return all[id];
-    }
+      const id = idInput.value.trim();
+      const name = nameInput.value.trim();
+      const spec = specInput.value.trim();
+      const priceStr = priceInput.value.trim();
+      const qtyStr = qtyInput.value.trim();
+      const note = noteInput.value.trim();
 
-    let qrcodeInstance = null;
-
-    function handleCreateMaterial() {
-      const name = document.getElementById('mat-name').value.trim();
-      const spec = document.getElementById('mat-spec').value.trim();
-      const note = document.getElementById('mat-note').value.trim();
-      const price = document.getElementById('mat-price').value.trim();
-      const qty = document.getElementById('mat-qty').value.trim();
-
-      if (!name) {
-        alert('자재명은 필수입니다.');
+      // 자재번호 검증: 8자리 필수
+      if (id.length !== 8) {
+        alert("자재번호는 정확히 8자리여야 합니다.");
+        idInput.focus();
         return;
       }
 
-      const id = generateMaterialId();
+      if (!name) {
+        alert("자재명은 필수입니다.");
+        nameInput.focus();
+        return;
+      }
 
-      const material = {
+      const price = priceStr ? Number(priceStr) : 0;
+      const qty = qtyStr ? Number(qtyStr) : 0;
+
+      // 기존 목록 불러오기
+      const list = loadInventory();
+
+      // 자재번호 중복 체크
+      const dup = list.find(item => item.id === id);
+      if (dup) {
+        const overwrite = confirm("이미 같은 자재번호가 있습니다. 이 항목을 덮어쓸까요?");
+        if (!overwrite) return;
+
+        // 덮어쓰기: 기존 항목 수정
+        const newList = list.map(item =>
+          item.id === id
+            ? { ...item, name, spec, price, qty, note, updatedAt: new Date().toISOString() }
+            : item
+        );
+        saveInventory(newList);
+        renderTable();
+        clearForm();
+        return;
+      }
+
+      // 새 항목 추가
+      const newItem = {
         id,
         name,
         spec,
+        price,
+        qty,
         note,
-        price: price ? Number(price) : 0,
-        qty: qty ? Number(qty) : 0,
         createdAt: new Date().toISOString()
       };
 
-      saveMaterial(id, material);
+      list.push(newItem);
+      saveInventory(list);
+      renderTable();
+      clearForm();
+    }
 
-      const qrContainer = document.getElementById('qrcode');
-      qrContainer.innerHTML = '';
+    // 폼 초기화
+    function clearForm() {
+      document.getElementById("mat-id").value = "";
+      document.getElementById("mat-name").value = "";
+      document.getElementById("mat-spec").value = "";
+      document.getElementById("mat-price").value = "";
+      document.getElementById("mat-qty").value = "";
+      document.getElementById("mat-note").value = "";
+    }
 
-      qrcodeInstance = new QRCode(qrContainer, {
-        text: id,
-        width: 200,
-        height: 200
+    // 테이블 렌더링
+    function renderTable() {
+      const tbody = document.getElementById("inventory-body");
+      const list = loadInventory();
+
+      // 최신 입력이 위로 오도록 정렬 (createdAt 기준 내림차순)
+      list.sort((a, b) => {
+        const ta = a.createdAt || "";
+        const tb = b.createdAt || "";
+        return ta < tb ? 1 : ta > tb ? -1 : 0;
       });
 
-      qrContainer.style.display = 'inline-block';
-
-      const resultBox = document.getElementById('create-result');
-      resultBox.style.display = 'block';
-      resultBox.innerHTML = `
-        <div><strong>자재가 저장되었습니다.</strong></div>
-        <div>이 QR 코드를 인쇄하거나 라벨에 붙여서 사용하세요.</div>
-        <div class="badge-id">ID: ${id}</div>
-      `;
-
-      document.getElementById('mat-name').value = '';
-      document.getElementById('mat-spec').value = '';
-      document.getElementById('mat-note').value = '';
-      document.getElementById('mat-price').value = '';
-      document.getElementById('mat-qty').value = '';
-    }
-
-    let html5QrCode = null;
-    let isScanning = false;
-
-    async function startScan() {
-      const msg = document.getElementById('scan-message');
-      msg.style.display = 'block';
-      msg.innerHTML = '카메라 권한 허용 후, QR 코드를 카메라 중앙에 맞춰주세요.';
-
-      if (isScanning) return;
-
-      const readerElementId = "reader";
-
-      if (!html5QrCode) {
-        html5QrCode = new Html5Qrcode(readerElementId);
-      }
-
-      const config = {
-        fps: 10,
-        qrbox: { width: 250, height: 250 }
-      };
-
-      const onScanSuccess = (decodedText, decodedResult) => {
-        console.log('스캔 성공:', decodedText, decodedResult);
-        msg.innerHTML = 'QR 코드 인식 완료! 자재 정보를 불러옵니다.';
-
-        stopScan();
-        showMaterialFromId(decodedText);
-      };
-
-      const onScanFailure = (errorMessage) => {
-      };
-
-      try {
-        isScanning = true;
-        await html5QrCode.start(
-          { facingMode: "environment" },
-          config,
-          onScanSuccess,
-          onScanFailure
-        );
-      } catch (err) {
-        console.error(err);
-        msg.innerHTML = '<span class="danger">카메라를 시작할 수 없습니다. (HTTPS 환경 또는 권한 설정을 확인하세요)</span>';
-        isScanning = false;
-      }
-    }
-
-    async function stopScan() {
-      if (html5QrCode && isScanning) {
-        try {
-          await html5QrCode.stop();
-        } catch (err) {
-          console.error('stop error', err);
-        }
-      }
-      isScanning = false;
-    }
-
-    function showMaterialFromId(id) {
-      const detailBox = document.getElementById('material-detail');
-      const msg = document.getElementById('scan-message');
-
-      const material = findMaterial(id);
-
-      if (!material) {
-        detailBox.style.display = 'block';
-        detailBox.innerHTML = `
-          <p class="danger">해당 ID의 자재 정보를 찾을 수 없습니다.</p>
-          <p style="font-size:13px; color:#6b7280;">같은 브라우저에서 자재를 등록했는지 확인하세요.</p>
-          <p class="badge-id">ID: ${id}</p>
+      if (list.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="8" class="empty-row">등록된 재고가 없습니다.</td>
+          </tr>
         `;
         return;
       }
 
-      detailBox.style.display = 'block';
-      detailBox.innerHTML = `
-        <p><strong>자재명:</strong> ${material.name}</p>
-        <p><strong>자재규격:</strong> ${material.spec || '-'}</p>
-        <p><strong>비고:</strong> ${material.note || '-'}</p>
-        <p><strong>금액:</strong> ${material.price.toLocaleString()} 원</p>
-        <p><strong>현재수량:</strong> ${material.qty}</p>
-        <p class="badge-id">ID: ${material.id}</p>
-      `;
+      tbody.innerHTML = "";
+      list.forEach((item, index) => {
+        const tr = document.createElement("tr");
 
-      msg.innerHTML = '자재 정보를 불러왔습니다.';
+        const priceText =
+          typeof item.price === "number"
+            ? item.price.toLocaleString() + " 원"
+            : "-";
+
+        const qtyText =
+          typeof item.qty === "number"
+            ? item.qty
+            : "-";
+
+        tr.innerHTML = `
+          <td>${index + 1}</td>
+          <td><span class="badge-id">${item.id}</span></td>
+          <td>${item.name}</td>
+          <td>${item.spec || "-"}</td>
+          <td>${priceText}</td>
+          <td>${qtyText}</td>
+          <td style="text-align:left;">${item.note || "-"}</td>
+          <td>
+            <button class="btn-danger" onclick="deleteItem('${item.id}')">삭제</button>
+          </td>
+        `;
+
+        tbody.appendChild(tr);
+      });
     }
 
-    window.addEventListener('beforeunload', () => {
-      stopScan();
-    });
+    // 항목 삭제
+    function deleteItem(id) {
+      const ok = confirm(`자재번호 ${id} 항목을 삭제하시겠습니까?`);
+      if (!ok) return;
+
+      const list = loadInventory();
+      const newList = list.filter(item => item.id !== id);
+      saveInventory(newList);
+      renderTable();
+    }
   </script>
 </body>
 </html>
